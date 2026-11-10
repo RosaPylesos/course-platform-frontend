@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import CourseFilters from "@/components/courses/CourseFilters"
 import { getCourses } from "@/api/courses"
 import { getCourseFilters } from "@/api/courseFilters"
 import CourseGrid from "@/components/courses/CourseGrid"
@@ -19,16 +19,55 @@ function CatalogPage() {
   })
   const [search, setSearch] = useState("")
   const [debouncedSearch, setDebouncedSearch] = useState("")
+  const [difficulties, setDifficulties] = useState([])
+  const [debouncedDifficulties, setDebouncedDifficulties] = useState([])
+  const [selectedTopic, setSelectedTopic] = useState("")
+  const [debouncedTopic, setDebouncedTopic] = useState("")
+  const [selectedAuthors, setSelectedAuthors] = useState([])
+  const [debouncedAuthors, setDebouncedAuthors] = useState([])
+  const [selectedTags, setSelectedTags] = useState({})
+  const [debouncedTags, setDebouncedTags] = useState({})
+  const [filtersLoaded, setFiltersLoaded] = useState(false)
+
+  function handleResetFilters() {
+    setSearch("")
+    setDifficulties([])
+    setSelectedTopic("")
+    setSelectedAuthors([])
+    setSelectedTags({})
+    setPage(1)
+  }
 
   useEffect(() => {
+
+    if (!setFiltersLoaded) return
     async function loadCourses() {
       try {
         setLoading(true)
         setError(null)
 
+        const selectedTagSlugs = filters.tag_categories.flatMap(
+          (category) => {
+            const selectedIds = debouncedTags[category.id] || []
+
+            return category.tags
+              .filter((tag) => selectedIds.includes(tag.id))
+              .map((tag) => tag.slug)
+          }
+        )
+
         const data = await getCourses({ 
           page,
           search: debouncedSearch || undefined,
+          difficulties: debouncedDifficulties,
+          topics: debouncedTopic || undefined,
+          includeDescendants: debouncedTopic
+          ? filters.topics.find((topic) => topic.slug === debouncedTopic)?.parent_id === null
+          : undefined,
+          authorIds: debouncedAuthors,
+          tags: selectedTagSlugs.length
+          ? selectedTagSlugs.join(",")
+          :undefined,
         })
         setCourses(data.items)
         setTotalPages(data.total_pages)
@@ -40,13 +79,23 @@ function CatalogPage() {
     }
 
     loadCourses()
-  }, [page, debouncedSearch])
+  }, [
+    page, 
+    debouncedSearch, 
+    debouncedDifficulties, 
+    debouncedTopic, 
+    debouncedAuthors,
+    debouncedTags,
+    // filters.tag_categories,
+    // filters.topics,
+  ])
 
   useEffect(() => {
     async function loadFilters() {
       try {
         const data = await getCourseFilters()
         setFilters(data)
+        setFiltersLoaded(true)
       } catch (err) {
         console.error("Не удалось загрузить фильтры: ", err)
       }
@@ -58,14 +107,30 @@ function CatalogPage() {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedSearch(search.trim())
+      setDebouncedDifficulties(difficulties)
+      setDebouncedTopic(selectedTopic)
+      setDebouncedAuthors(selectedAuthors)
+      setDebouncedTags(selectedTags)
     }, 500)
 
     return () => clearTimeout(timeoutId)
-  }, [search])
+  }, [
+    search,
+    difficulties, 
+    selectedTopic, 
+    selectedAuthors,
+    selectedTags,
+  ])
 
   useEffect(() => {
     setPage(1)
-  }, [debouncedSearch])
+  }, [
+    debouncedSearch, 
+    debouncedAuthors,
+    debouncedDifficulties,
+    debouncedTags,
+    debouncedTopic,
+  ])
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-10">
@@ -76,14 +141,22 @@ function CatalogPage() {
         </p>
       </div>
 
-      <div className="mb-8">
-        <Input
-          type="search"
-          placeholder="Поиск курсов..."
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        />
-      </div>
+      <CourseFilters
+        search={search}
+        onSeachChange={setSearch}
+        difficulties={difficulties}
+        onDifficultiesChange={setDifficulties}
+        topics={filters.topics}
+        selectedTopic={selectedTopic}
+        onTopicChange={setSelectedTopic}
+        authors={filters.authors}
+        selectedAuthors={selectedAuthors}
+        onAuthorsChange={setSelectedAuthors}
+        tagCategories={filters.tag_categories}
+        selectedTags={selectedTags}
+        onTagsChange={setSelectedTags}
+        onResetFilters={handleResetFilters}
+      />
 
       {loading && (
         <p className="py-12 text-center text-muted-foreground">

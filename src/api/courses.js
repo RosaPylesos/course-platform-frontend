@@ -41,3 +41,7 @@ export function getCourses({
 
     return apiRequest(`/courses/?${params.toString()}`)
 }
+
+export function getCourse(courseId) {
+    return apiRequest(`/courses/${courseId}`)
+}

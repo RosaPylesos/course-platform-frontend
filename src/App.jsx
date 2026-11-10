@@ -4,6 +4,7 @@ import HomePage from "@/pages/HomePage"
 import CatalogPage from "@/pages/CatalogPage"
 import CoursePage from "@/pages/CoursePage"
 import LoginPage from "@/pages/LoginPage"
+import MyLearningPage from "@/pages/MyLearningPage"
 
 import Header from "@/components/layout/Header"
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/courses" element={<CatalogPage />} />
         <Route path="/courses/:courseId" element={<CoursePage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/my-learning" element={<MyLearningPage />} />
       </Routes>
     </BrowserRouter>
   )
