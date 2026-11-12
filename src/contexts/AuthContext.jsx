@@ -8,6 +8,7 @@ import {
 import {
     getCurrentUser,
     loginUser,
+    updateUserProfile,
 } from "@/api/auth"
 
 const AuthContext = createContext(null)
@@ -52,6 +53,14 @@ export function AuthProvider({ children }) {
         return data
     }
 
+    async function updateProfile(userData) {
+        const updatedUser = await updateUserProfile(token, userData)
+
+        setUser(updatedUser)
+
+        return updatedUser
+    }
+
     function logout() {
         localStorage.removeItem(TOKEN_KEY)
         setToken(null)
@@ -67,6 +76,7 @@ export function AuthProvider({ children }) {
                 isAuthenticated: Boolean(user),
                 login,
                 logout,
+                updateProfile,
             }}
         >
             {children}

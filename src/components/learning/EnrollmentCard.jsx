@@ -128,7 +128,7 @@ function EnrollmentCard({ enrollment, onStatusChange }) {
             {currentStatus === "active" && (
                 <>
                 <Button asChild className="w-full">
-                    <Link to={`/courses/${course.id}`}>
+                    <Link to={`/courses/${course.id}/progress`}>
                     Продолжить обучение
                     </Link>
                 </Button>
@@ -146,7 +146,7 @@ function EnrollmentCard({ enrollment, onStatusChange }) {
 
             {currentStatus === "completed" && (
                 <Button asChild className="w-full">
-                <Link to={`/courses/${course.id}`}>
+                <Link to={`/courses/${course.id}/progress`}>
                     Посмотреть курс
                 </Link>
                 </Button>

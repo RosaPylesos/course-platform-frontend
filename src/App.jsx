@@ -5,6 +5,8 @@ import CatalogPage from "@/pages/CatalogPage"
 import CoursePage from "@/pages/CoursePage"
 import LoginPage from "@/pages/LoginPage"
 import MyLearningPage from "@/pages/MyLearningPage"
+import CourseProgressPage from "@/pages/CourseProgressPage"
+import ProfilePage from "@/pages/ProfilePage"
 
 import Header from "@/components/layout/Header"
 
@@ -20,6 +22,11 @@ function App() {
         <Route path="/courses/:courseId" element={<CoursePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/my-learning" element={<MyLearningPage />} />
+        <Route
+          path="/courses/:courseId/progress"
+          element={<CourseProgressPage />}
+        />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </BrowserRouter>
   )

@@ -1,6 +1,12 @@
 import { Link, NavLink, useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/AuthContext"
 
 function Header() {
@@ -34,23 +40,45 @@ function Header() {
           </NavLink>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div>
           {!loading && (
-            user ? (
-              <>
-                <span className="text-sm font-medium">
-                  {user.name}
-                </span>
-
-                <Button variant="outline" size="sm" onClick={handleLogout}>
-                  Выйти
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  {user ? user.name : "Аккаунт"}
                 </Button>
-              </>
-            ) : (
-              <Button asChild size="sm">
-                <Link to="/login">Войти</Link>
-              </Button>
-            )
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end">
+                {user ? (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile">
+                        Мой профиль
+                      </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem onSelect={handleLogout}>
+                      Выйти
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/login">
+                        Войти
+                      </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
+                      <Link to="/login?mode=register">
+                        Регистрация
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>

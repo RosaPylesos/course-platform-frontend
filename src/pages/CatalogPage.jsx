@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import CourseFilters from "@/components/courses/CourseFilters"
 import { getCourses } from "@/api/courses"
@@ -6,6 +7,7 @@ import { getCourseFilters } from "@/api/courseFilters"
 import CourseGrid from "@/components/courses/CourseGrid"
 
 function CatalogPage() {
+  const [searchParams] = useSearchParams()
   const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -21,18 +23,20 @@ function CatalogPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const [difficulties, setDifficulties] = useState([])
   const [debouncedDifficulties, setDebouncedDifficulties] = useState([])
-  const [selectedTopic, setSelectedTopic] = useState("")
-  const [debouncedTopic, setDebouncedTopic] = useState("")
+  const [selectedTopics, setSelectedTopics] = useState([])
+  const [debouncedTopics, setDebouncedTopics] = useState([])
+  const [includeDescendants, setIncludeDescendants] = useState(false)
   const [selectedAuthors, setSelectedAuthors] = useState([])
   const [debouncedAuthors, setDebouncedAuthors] = useState([])
   const [selectedTags, setSelectedTags] = useState({})
   const [debouncedTags, setDebouncedTags] = useState({})
   const [filtersLoaded, setFiltersLoaded] = useState(false)
+  const [contextTopicId, setContextTopicId] = useState(null)
 
   function handleResetFilters() {
     setSearch("")
     setDifficulties([])
-    setSelectedTopic("")
+    setSelectedTopics([])
     setSelectedAuthors([])
     setSelectedTags({})
     setPage(1)
@@ -40,7 +44,7 @@ function CatalogPage() {
 
   useEffect(() => {
 
-    if (!setFiltersLoaded) return
+    if (!filtersLoaded) return
     async function loadCourses() {
       try {
         setLoading(true)
@@ -60,10 +64,8 @@ function CatalogPage() {
           page,
           search: debouncedSearch || undefined,
           difficulties: debouncedDifficulties,
-          topics: debouncedTopic || undefined,
-          includeDescendants: debouncedTopic
-          ? filters.topics.find((topic) => topic.slug === debouncedTopic)?.parent_id === null
-          : undefined,
+          topics: debouncedTopics,
+          includeDescendants: includeDescendants,
           authorIds: debouncedAuthors,
           tags: selectedTagSlugs.length
           ? selectedTagSlugs.join(",")
@@ -83,9 +85,10 @@ function CatalogPage() {
     page, 
     debouncedSearch, 
     debouncedDifficulties, 
-    debouncedTopic, 
+    debouncedTopics, 
     debouncedAuthors,
     debouncedTags,
+    includeDescendants,
     // filters.tag_categories,
     // filters.topics,
   ])
@@ -93,7 +96,9 @@ function CatalogPage() {
   useEffect(() => {
     async function loadFilters() {
       try {
-        const data = await getCourseFilters()
+        const data = await getCourseFilters({
+          topicId: contextTopicId,
+        })
         setFilters(data)
         setFiltersLoaded(true)
       } catch (err) {
@@ -102,13 +107,26 @@ function CatalogPage() {
     }
 
     loadFilters()
-  }, [])
+  }, [contextTopicId])
+
+useEffect(() => {
+  if (!filtersLoaded) return
+
+  const topicId = searchParams.get("topic")
+  const shouldIncludeDescendants =
+    searchParams.get("include_descendants") === "true"
+
+  setContextTopicId(topicId)
+  setIncludeDescendants(topicId ? shouldIncludeDescendants : false)
+
+  setSelectedTopics([])
+}, [filtersLoaded, searchParams])
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedSearch(search.trim())
       setDebouncedDifficulties(difficulties)
-      setDebouncedTopic(selectedTopic)
+      setDebouncedTopics(selectedTopics)
       setDebouncedAuthors(selectedAuthors)
       setDebouncedTags(selectedTags)
     }, 500)
@@ -117,7 +135,7 @@ function CatalogPage() {
   }, [
     search,
     difficulties, 
-    selectedTopic, 
+    selectedTopics, 
     selectedAuthors,
     selectedTags,
   ])
@@ -129,7 +147,7 @@ function CatalogPage() {
     debouncedAuthors,
     debouncedDifficulties,
     debouncedTags,
-    debouncedTopic,
+    debouncedTopics,
   ])
 
   return (
@@ -147,8 +165,8 @@ function CatalogPage() {
         difficulties={difficulties}
         onDifficultiesChange={setDifficulties}
         topics={filters.topics}
-        selectedTopic={selectedTopic}
-        onTopicChange={setSelectedTopic}
+        selectedTopics={selectedTopics}
+        onTopicChange={setSelectedTopics}
         authors={filters.authors}
         selectedAuthors={selectedAuthors}
         onAuthorsChange={setSelectedAuthors}

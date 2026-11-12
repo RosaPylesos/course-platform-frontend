@@ -6,6 +6,7 @@ export function getCourses({
     search,
     authorIds,
     topics,
+    contextTopicId,
     tags,
     includeDescendants,
     difficulties,
@@ -27,6 +28,10 @@ export function getCourses({
         params.set("topics", topics)
     }
 
+    if (contextTopicId) {
+        params.set("topic_id", contextTopicId)
+    }
+
     if (tags) {
         params.set("tags", tags)
     }
@@ -44,4 +49,11 @@ export function getCourses({
 
 export function getCourse(courseId) {
     return apiRequest(`/courses/${courseId}`)
+}
+
+export function getCourseProgress(token, courseId) {
+    return apiRequest(`/courses/${courseId}/progress`, {
+        method: "GET",
+        token,
+    })
 }

@@ -12,7 +12,7 @@ function CourseFilters({
     difficulties,
     onDifficultiesChange,
     topics,
-    selectedTopic,
+    selectedTopics,
     onTopicChange,
     authors,
     selectedAuthors,
@@ -48,7 +48,7 @@ function CourseFilters({
 
             <TopicFilter
                 topics={topics}
-                value={selectedTopic}
+                value={selectedTopics}
                 onChange={onTopicChange}
             />
 

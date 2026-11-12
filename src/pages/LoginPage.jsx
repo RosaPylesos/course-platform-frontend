@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,7 +9,6 @@ import { registerUser } from "@/api/auth"
 function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
-  const [isRegistering, setIsRegistering] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     surname: "",
@@ -19,6 +18,10 @@ function LoginPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [isRegistering, setIsRegistering] = useState(
+    searchParams.get("mode") === "register"
+  )
 
   async function handleRegister(event) {
     event.preventDefault()
@@ -184,7 +187,12 @@ function LoginPage() {
         <button
           type="button"
           className="ml-1 font-medium underline underline-offset-4"
-          onClick={() => setIsRegistering((value) => !value)}
+          onClick={() => {
+            const nextMode = !isRegistering
+
+            setIsRegistering(nextMode)
+            setSearchParams(nextMode ? { mode: "register" } : {})
+          }}
         >
           {isRegistering ? "Войти" : "Зарегистрироваться"}
         </button>
