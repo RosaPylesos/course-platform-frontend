@@ -65,6 +65,7 @@ function CatalogPage() {
           search: debouncedSearch || undefined,
           difficulties: debouncedDifficulties,
           topics: debouncedTopics,
+          contextTopicId: contextTopicId,
           includeDescendants: includeDescendants,
           authorIds: debouncedAuthors,
           tags: selectedTagSlugs.length
@@ -82,7 +83,8 @@ function CatalogPage() {
 
     loadCourses()
   }, [
-    page, 
+    page,
+    contextTopicId,
     debouncedSearch, 
     debouncedDifficulties, 
     debouncedTopics, 
@@ -113,13 +115,18 @@ useEffect(() => {
   if (!filtersLoaded) return
 
   const topicId = searchParams.get("topic")
+  const topicsParam = searchParams.get("topics")
   const shouldIncludeDescendants =
     searchParams.get("include_descendants") === "true"
 
   setContextTopicId(topicId)
   setIncludeDescendants(topicId ? shouldIncludeDescendants : false)
 
-  setSelectedTopics([])
+  setSelectedTopics(
+    topicsParam
+    ? topicsParam.split(",")
+    : []
+  )
 }, [filtersLoaded, searchParams])
 
   useEffect(() => {

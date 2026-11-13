@@ -7,6 +7,8 @@ import LoginPage from "@/pages/LoginPage"
 import MyLearningPage from "@/pages/MyLearningPage"
 import CourseProgressPage from "@/pages/CourseProgressPage"
 import ProfilePage from "@/pages/ProfilePage"
+import LessonPage from "@/pages/LessonPage"
+import AuthorsCoursesPage from "@/pages/AuthorsCoursesPage"
 
 import Header from "@/components/layout/Header"
 
@@ -26,7 +28,15 @@ function App() {
           path="/courses/:courseId/progress"
           element={<CourseProgressPage />}
         />
+        <Route
+          path="/courses/:courseId/lessons/:lessonId"
+          element={<LessonPage />}
+        />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route
+          path="/author/courses"
+          element={<AuthorsCoursesPage />}
+        />
       </Routes>
     </BrowserRouter>
   )

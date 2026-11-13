@@ -23,6 +23,10 @@ function CoursePage() {
   const [enrollmentStatus, setEnrollmentStatus] = useState(null)
   const [checkingEnrollment, setCheckingEnrollment] = useState(true)
 
+  function handleGoToProgress() {
+    navigate(`/courses/${courseId}/progress`)
+  }
+
   async function handleEnroll() {
     if (!user) {
       navigate("/login")
@@ -191,25 +195,25 @@ function CoursePage() {
     {/* Enrolling */}
     <section className="border-t pt-6">
       <div className="space-y-2">
-        <Button
-          onClick={handleEnroll}
-          disabled={
-            enrolling ||
-            checkingEnrollment ||
-            enrollmentStatus === "active" ||
-            enrollmentStatus === "completed"
-          }
-        >
-          {checkingEnrollment
-            ? "Проверяем запись..."
-            : enrolling
-              ? "Записываем..."
-              : enrollmentStatus === "active"
-                ? "Вы записаны"
-                : enrollmentStatus === "completed"
-                  ? "Курс завершён"
+        {enrollmentStatus === "active" ||
+          enrollmentStatus === "completed" ? (
+            <Button onClick={handleGoToProgress}>
+              {enrollmentStatus === "active"
+                ? "Перейти к обучению"
+                : "Посмотреть курс"}
+            </Button>
+          ) : (
+            <Button
+              onClick={handleEnroll}
+              disabled={enrolling || checkingEnrollment}
+            >
+              {checkingEnrollment
+                ? "Проверяем запись..."
+                : enrolling
+                  ? "Записываем..."
                   : "Записаться на курс"}
-        </Button>
+            </Button>
+          )}
 
         {enrollmentError && (
           <p className="text-sm text-destructive">

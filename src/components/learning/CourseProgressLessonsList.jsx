@@ -4,7 +4,7 @@ import {
 
 import LessonAccordionItem from "@/components/learning/LessonAccordionItem"
 
-function CourseProgressLessonsList({ lessons }) {
+function CourseProgressLessonsList({ lessons, courseId }) {
   return (
     <section className="space-y-4">
       <h2 className="text-2xl font-bold">
@@ -17,6 +17,7 @@ function CourseProgressLessonsList({ lessons }) {
             <LessonAccordionItem
               key={lesson.lesson_id}
               lesson={lesson}
+              courseId={courseId}
             />
           ))}
         </Accordion>

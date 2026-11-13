@@ -57,3 +57,44 @@ export function getCourseProgress(token, courseId) {
         token,
     })
 }
+
+export function getMyCourses({
+    page = 1,
+    pageSize = 16,
+    status,
+    token,
+} = {}) {
+    const params = new URLSearchParams({
+        page: String(page),
+        page_size: String(pageSize),
+    })
+
+    if (status) {
+        params.set("status", status)
+    }
+
+    return apiRequest(`/courses/my?${params.toString()}`, {
+        token,
+    })
+}
+
+export function createCourse({
+    topic_id,
+    name,
+    description,
+    difficulty,
+    thumbnail_path,
+    token,
+}) {
+    return apiRequest("/courses/", {
+        method: "POST",
+        token,
+        body: {
+            topic_id,
+            name,
+            description: description || null,
+            difficulty,
+            thumbnail_path: thumbnail_path || null,
+        },
+    })
+}

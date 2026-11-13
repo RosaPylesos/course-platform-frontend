@@ -68,6 +68,7 @@ function CourseProgressPage() {
 
       <CourseProgressLessonsList
         lessons={progress.lessons}
+        courseId={courseId}
       />
     </div>
   )

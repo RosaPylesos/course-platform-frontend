@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom"
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -6,7 +8,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 
-function LessonAccordionItem({ lesson }) {
+function LessonAccordionItem({ lesson, courseId }) {
+  const navigate = useNavigate()
+
   let status
 
   if (lesson.is_completed) {
@@ -50,7 +54,16 @@ function LessonAccordionItem({ lesson }) {
             {lesson.description}
           </p>
 
-          <Button className="mx-auto">
+          <Button 
+            className="mx-auto"
+            onClick={() =>
+              navigate(`/courses/${courseId}/lessons/${lesson.lesson_id}`, {
+                state: {
+                  isCompleted: lesson.is_completed,
+                },
+              })
+            }
+          >
             Перейти к уроку
           </Button>
         </div>

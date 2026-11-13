@@ -7,12 +7,13 @@ function CourseSection({ topic, courses }) {
   // console.log("Home topic:", topic)
   // console.log("Has children:", topic.has_children)
 
-  const searchParams = new URLSearchParams({
-    topic: topic.id,
-  })
+  const searchParams = new URLSearchParams()
 
   if (topic.has_children) {
+    searchParams.set("topic", topic.id)
     searchParams.set("include_descendants", "true")
+  } else {
+    searchParams.set("topics", topic.slug)
   }
 
   // console.log("Generated URL:", `/courses?${searchParams.toString()}`)
