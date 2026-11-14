@@ -8,23 +8,12 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 
 import { createCourse } from "@/api/courses"
 import { useAuth } from "@/contexts/AuthContext"
 
-import TopicPicker from "./TopicPicker"
+import CourseFormFields from "./CourseFormFields"
 
 function CreateCourseDialog({ open, onOpenChange, topics, onCourseCreated }) {
     
@@ -86,67 +75,19 @@ function CreateCourseDialog({ open, onOpenChange, topics, onCourseCreated }) {
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="course-name">Название курса</Label>
-                        <Input
-                            id="course-name"
-                            value={name}
-                            onChange={(event) => setName(event.target.value)}
-                            placeholder="Например, Основы Python"
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="course-description">Описание</Label>
-                        <Textarea
-                            id="course-description"
-                            value={description}
-                            onChange={(event) => setDescription(event.target.value)}
-                            placeholder="Расскажите, чему научатся ученики..."
-                            rows={4}
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label>Тема</Label>
-                        <TopicPicker
-                            topics={topics}
-                            value={topic?.id}
-                            onChange={setTopic}
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label>Сложность</Label>
-
-                        <Select
-                            value={difficulty}
-                            onValueChange={setDifficulty}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Выберите сложность" />
-                            </SelectTrigger>
-
-                            <SelectContent>
-                                <SelectItem value="beginner">Начальный</SelectItem>
-                                <SelectItem value="intermediate">Средний</SelectItem>
-                                <SelectItem value="advanced">Продвинутый</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="course-thumbnail">Ссылка на обложку</Label>
-                        <Input
-                            id="course-thumbnail"
-                            type="url"
-                            value={thumbnailPath}
-                            onChange={(event) => setThumbnailPath(event.target.value)}
-                            placeholder="https://example.com/image.jpg"
-                        />
-                    </div>
-                </div>
+                <CourseFormFields
+                    name={name}
+                    onNameChange={setName}
+                    description={description}
+                    onDescriptionChange={setDescription}
+                    topic={topic}
+                    onTopicChange={setTopic}
+                    difficulty={difficulty}
+                    onDifficultyChange={setDifficulty}
+                    thumbnailPath={thumbnailPath}
+                    onThumbnailPathChange={setThumbnailPath}
+                    topics={topics}
+                />
 
                 {formError && (
                     <p className="text-sm text-destructive">{formError}</p>

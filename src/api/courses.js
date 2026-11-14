@@ -98,3 +98,31 @@ export function createCourse({
         },
     })
 }
+
+export function getMyCourse(courseId, token) {
+    return apiRequest(`/courses/my/${courseId}`, {
+        token,
+    })
+}
+
+export function updateCourse({
+    courseId,
+    topic_id,
+    name,
+    description,
+    difficulty,
+    thumbnail_path,
+    token,
+}) {
+    return apiRequest(`/courses/${courseId}`, {
+        method: "PATCH",
+        token,
+        body: {
+            topic_id,
+            name,
+            description: description || null,
+            difficulty,
+            thumbnail_path: thumbnail_path || null,
+        },
+    })
+}
