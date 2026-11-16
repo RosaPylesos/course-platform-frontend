@@ -42,6 +42,8 @@ const aliases = {
   dockerfile: "docker",
 }
 
+export const supportedLanguages = Object.keys(languages)
+
 let highlighter
 
 function getHighlighter() {

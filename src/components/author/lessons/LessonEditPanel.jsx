@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -23,6 +24,8 @@ function LessonEditPanel({
     token,
     onLessonUpdated,
 }) {
+
+    const navigate = useNavigate()
 
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
@@ -114,6 +117,18 @@ function LessonEditPanel({
                                 rows={5}
                             />
                         </div>
+                    </div>
+
+                    <div className="px-4">
+                        <Button
+                            type="button"
+                            className="w-full"
+                            onClick={() =>
+                                navigate(`/author/courses/${courseId}/lessons/${lesson.id}/edit`)
+                            }
+                        >
+                            Редактировать содержимое урока
+                        </Button>
                     </div>
 
                     {error && (

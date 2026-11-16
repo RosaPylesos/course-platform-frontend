@@ -40,13 +40,19 @@ export function createLesson(courseId, { name, description }, token) {
     })
 }
 
-export function updateLesson(courseId, lessonId, { name, description }, token) {
+export function updateLesson(
+    courseId, 
+    lessonId, 
+    { name, description, content }, 
+    token
+) {
     return apiRequest(`/courses/${courseId}/lessons/${lessonId}`, {
         method: "PATCH",
         token,
         body: {
             name,
             description: description || null,
+            ...(content !== undefined && { content })
         },
     })
 }

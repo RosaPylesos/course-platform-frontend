@@ -9,6 +9,7 @@ import CourseProgressPage from "@/pages/CourseProgressPage"
 import ProfilePage from "@/pages/ProfilePage"
 import LessonPage from "@/pages/LessonPage"
 import AuthorsCoursesPage from "@/pages/AuthorsCoursesPage"
+import LessonEditorPage from "@/pages/LessonEditorPage"
 
 import Header from "@/components/layout/Header"
 
@@ -36,6 +37,10 @@ function App() {
         <Route
           path="/author/courses"
           element={<AuthorsCoursesPage />}
+        />
+        <Route
+          path="/author/courses/:courseId/lessons/:lessonId/edit"
+          element={<LessonEditorPage />}
         />
       </Routes>
     </BrowserRouter>

@@ -1,9 +1,9 @@
-import LessonHeadingBlock from "./blocks/LessonHeadingBlock"
-import LessonTextBlock from "./blocks/LessonTextBlock"
-import LessonImageBlock from "./blocks/LessonImageBlock"
-import LessonVideoBlock from "./blocks/LessonVideoBlock"
-import LessonCalloutBlock from "./blocks/LessonCalloutBlock"
-import LessonCodeBlock from "./blocks/LessonCodeBlock"
+import LessonHeadingBlock from "../../lesson-blocks/LessonHeadingBlock"
+import LessonTextBlock from "../../lesson-blocks/LessonTextBlock"
+import LessonImageBlock from "../../lesson-blocks/LessonImageBlock"
+import LessonVideoBlock from "../../lesson-blocks/LessonVideoBlock"
+import LessonCalloutBlock from "../../lesson-blocks/LessonCalloutBlock"
+import LessonCodeBlock from "../../lesson-blocks/LessonCodeBlock"
 
 const blockComponents = {
   heading: LessonHeadingBlock,
