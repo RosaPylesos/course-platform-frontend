@@ -2,7 +2,7 @@ function LessonTextBlock({ content }) {
   const runs = content?.runs ?? []
 
   return (
-    <p className="text-base leading-7">
+    <p className="whitespace-pre-wrap text-base leading-7">
       {runs.map((run, index) => {
         let element = run.content
 

@@ -126,3 +126,24 @@ export function updateCourse({
         },
     })
 }
+
+export function deleteCourse(courseId, token) {
+    return apiRequest(`/courses/${courseId}`, {
+        method: "DELETE",
+        token,
+    })
+}
+
+export function publishCourse(courseId, token) {
+    return apiRequest(`/courses/${courseId}/publish`, {
+        method: "POST",
+        token,
+    })
+}
+
+export function archiveCourse(courseId, token) {
+    return apiRequest(`/courses/${courseId}/archive`, {
+        method: "POST",
+        token,
+    })
+}

@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import CourseFormFields from "@/components/author/CourseFormFields"
 import CourseLessonsTab from "@/components/author/lessons/CourseLessonsTab"
+import LessonEditPanel from "./lessons/LessonEditPanel"
 
 function ManageCourseDialog({ 
     open, 
@@ -42,6 +43,9 @@ function ManageCourseDialog({
     const [tagCategories, setTagCategories] = useState([])
     const [selectedTagIds, setSelectedTagIds] = useState([])
     const [initialTagIds, setInitialTagIds] = useState([])
+    const [selectedLesson, setSelectedLesson] = useState(null)
+    const [activeTab, setActiveTab] = useState("general")
+    const [isReorderMode, setIsReorderMode] = useState(false)
 
     async function handleSave() {
         if (!name.trim() || !topic) return
@@ -123,18 +127,32 @@ function ManageCourseDialog({
         loadTagCategories()
     }, [open])
 
+    useEffect(() => {
+        if (!open || !course) {
+            setSelectedLesson(null)
+        }
+    }, [open, course?.id])
+
     if (!course) return null
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-3xl">
+            <DialogContent
+                className="w-[calc(100vw-2rem)] max-w-[1100px] sm:max-w-[1100px] transition-all duration-300"
+            >
+                <div className="flex items-stretch gap-4 min-w-0">
+                    <div className="flex-1 min-w-0 space-y-4">
                 <DialogHeader>
                     <DialogTitle>
                         Управление курсом
                     </DialogTitle>
                 </DialogHeader>
 
-                <Tabs defaultValue="general" className="w-full">
+                <Tabs 
+                    defaultValue="general" 
+                    className="w-full" 
+                    onValueChange={setActiveTab}
+                >
                     <TabsList className="w-full">
                         <TabsTrigger value="general">Основное</TabsTrigger>
                         <TabsTrigger value="tags">Теги</TabsTrigger>
@@ -187,6 +205,9 @@ function ManageCourseDialog({
                         <CourseLessonsTab 
                             courseId={course.id} 
                             token={token} 
+                            onEditLesson={setSelectedLesson}
+                            onReorderModeChange={setIsReorderMode}
+                            isReorderMode={isReorderMode}
                         />
                     </TabsContent>
                 </Tabs>
@@ -194,22 +215,38 @@ function ManageCourseDialog({
                     <p className="text-sm text-destructive">{formError}</p>
                 )}
 
-                <div className="flex justify-end gap-2">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => onOpenChange(false)}
-                    >
-                        Отмена
-                    </Button>
+                {!isReorderMode && (
+                    <div className="flex justify-end gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => onOpenChange(false)}
+                        >
+                            Отмена
+                        </Button>
 
-                    <Button
-                        type="button"
-                        disabled={!name.trim() || !topic || isSubmitting}
-                        onClick={handleSave}
-                    >
-                        {isSubmitting ? "Сохранение..." : "Сохранить изменения"}
-                    </Button>
+                        <Button
+                            type="button"
+                            disabled={!name.trim() || !topic || isSubmitting}
+                            onClick={handleSave}
+                        >
+                            {isSubmitting ? "Сохранение..." : "Сохранить изменения"}
+                        </Button>
+                    </div>
+                )}
+
+                </div>
+
+                    <LessonEditPanel
+                        open={Boolean(selectedLesson) && activeTab === "lessons"}
+                        onOpenChange={(isOpen) => {
+                            if (!isOpen) setSelectedLesson(null)
+                        }}
+                        lesson={selectedLesson}
+                        courseId={course.id}
+                        token={token}
+                        onLessonUpdated={onCourseUpdated}
+                    />
                 </div>
             </DialogContent>
         </Dialog>

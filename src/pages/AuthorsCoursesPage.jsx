@@ -156,6 +156,8 @@ function AuthorsCoursesPage() {
                                 key={course.id}
                                 course={course}
                                 onManage={handleManageCourse}
+                                token={token}
+                                onCourseUpdated={loadCourses}
                             />
                         ))}
                     </div>

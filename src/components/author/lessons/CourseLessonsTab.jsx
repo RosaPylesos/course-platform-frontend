@@ -2,18 +2,23 @@ import { useEffect, useState } from "react"
 import { getCourseLessons, reorderCourseLessons } from "@/api/lessons"
 import { Button } from "@/components/ui/button"
 
+import { Plus, ArrowUpDown } from "lucide-react"
+
 import CreateLessonDialog from "@/components/author/lessons/CreateLessonDialog"
 import LessonItem from "@/components/author/lessons/LessonItem"
-import LessonEditPanel from "@/components/author/lessons/LessonEditPanel"
 import SortableLessonsList from "@/components/author/lessons/SortableLessonsList"
 
-function CourseLessonsTab({ courseId, token }) {
+function CourseLessonsTab({ 
+    courseId, 
+    token, 
+    onEditLesson,
+    onReorderModeChange,
+    isReorderMode,
+}) {
     const [lessons, setLessons] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
     const [createDialogOpen, setCreateDialogOpen] = useState(false)
-    const [selectedLesson, setSelectedLesson] = useState(null)
-    const [isReorderMode, setIsReorderMode] = useState(false)
     const [reorderedLessons, setReorderedLessons] = useState([])
     const [isSavingOrder, setIsSavingOrder] = useState(false)
     const [orderError, setOrderError] = useState("")
@@ -35,12 +40,12 @@ function CourseLessonsTab({ courseId, token }) {
 
     function handleStartReorder() {
         setReorderedLessons([...lessons])
-        setIsReorderMode(true)
+        onReorderModeChange(true)
     }
 
     function handleCancelReorder() {
         setReorderedLessons([])
-        setIsReorderMode(false)
+        onReorderModeChange(false)
     }
 
     function handleReorder(nextLessons) {
@@ -59,7 +64,7 @@ function CourseLessonsTab({ courseId, token }) {
             await loadLessons()
 
             setReorderedLessons([])
-            setIsReorderMode(false)
+            onReorderModeChange(false)
         } catch (error) {
             console.error("Не удалось изменить порядок уроков:", error)
             setOrderError(error.message || "Не удалось сохранить порядок уроков")
@@ -115,14 +120,21 @@ function CourseLessonsTab({ courseId, token }) {
                             <Button
                                 type="button"
                                 variant="outline"
+                                size="sm"
                                 onClick={handleStartReorder}
                             >
-                                Изменить порядок
+                                <ArrowUpDown className="mr-2 h-4 w-4" />
+                                Порядок
                             </Button>
                         )}
 
-                        <Button onClick={() => setCreateDialogOpen(true)}>
-                            Добавить урок
+                        <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => setCreateDialogOpen(true)}
+                        >
+                            <Plus className="mr-2 h-4 w-4" />
+                            Добавить
                         </Button>
                     </>
                 )}
@@ -147,7 +159,7 @@ function CourseLessonsTab({ courseId, token }) {
                         <LessonItem
                             key={lesson.id}
                             lesson={lesson}
-                            onEdit={setSelectedLesson}
+                            onEdit={onEditLesson}
                         />
                     ))}
                 </div>
@@ -161,16 +173,6 @@ function CourseLessonsTab({ courseId, token }) {
                 onLessonCreated={loadLessons}
             />
 
-            <LessonEditPanel
-                open={Boolean(selectedLesson)}
-                onOpenChange={(open) => {
-                    if (!open) setSelectedLesson(null)
-                }}
-                lesson={selectedLesson}
-                courseId={courseId}
-                token={token}
-                onLessonUpdated={loadLessons}
-            />
         </div>
     )
 }

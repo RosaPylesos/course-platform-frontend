@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
+import AuthorCourseActions from "./AuthorCourseActions"
+
 const statusLabels = {
     draft: "Черновик",
     published: "Опубликован",
@@ -21,7 +23,12 @@ function formatDate(dateString) {
     }).format(new Date(dateString))
 }
 
-function AuthorCourseCard({ course, onManage }) {
+function AuthorCourseCard({ 
+    course, 
+    onManage, 
+    token, 
+    onCourseUpdated, 
+}) {
     return (
         <article className="flex flex-col overflow-hidden rounded-xl border bg-card">
             <div className="aspect-video bg-muted">
@@ -44,9 +51,18 @@ function AuthorCourseCard({ course, onManage }) {
                         {course.topic?.name || "Тема не указана"}
                     </span>
 
-                    <Badge variant={statusVariants[course.status] ?? "secondary"}>
-                        {statusLabels[course.status] ?? course.status}
-                    </Badge>
+                    <div className="flex shrink-0 items-center gap-2">
+                        <Badge variant={statusVariants[course.status] ?? "secondary"}>
+                            {statusLabels[course.status] ?? course.status}
+                        </Badge>
+
+                        <AuthorCourseActions 
+                            course={course}
+                            onManage={onManage}
+                            token={token}
+                            onCourseUpdated={onCourseUpdated}
+                        />
+                    </div>
                 </div>
 
                 <h2 className="text-lg font-semibold">

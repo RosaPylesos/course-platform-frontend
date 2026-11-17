@@ -3,17 +3,11 @@ import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetDescription,
-} from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 
 import { updateLesson, deleteLesson } from "@/api/lessons"
 
+import { FilePenLine, Trash2 } from "lucide-react"
 import DeleteLessonDialog from "@/components/author/lessons/DeleteLessonDialog"
 
 function LessonEditPanel({
@@ -89,18 +83,22 @@ function LessonEditPanel({
 
     return (
         <>
-            <Sheet open={open} onOpenChange={onOpenChange}>
-                <SheetContent side="right" className="sm:max-w-md">
-                    <SheetHeader>
-                        <SheetTitle>Редактирование урока</SheetTitle>
-                        <SheetDescription>
+            {open && (
+                <div className="w-[min(20rem,35vw)] min-w-0 shrink-0 rounded-lg border bg-background p-5 flex flex-col gap-5">
+                    <div className="space-y-1">
+                        <h2 className="text-lg font-semibold">
+                            Редактирование урока
+                        </h2>
+                        <p className="text-sm text-muted-foreground">
                             Изменение названия и описания урока.
-                        </SheetDescription>
-                    </SheetHeader>
+                        </p>
+                    </div>
 
-                    <div className="space-y-4 px-4">
+                    <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="lesson-edit-name">Название урока</Label>
+                            <Label htmlFor="lesson-edit-name">
+                                Название урока
+                            </Label>
                             <Input
                                 id="lesson-edit-name"
                                 value={name}
@@ -109,7 +107,9 @@ function LessonEditPanel({
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="lesson-edit-description">Описание</Label>
+                            <Label htmlFor="lesson-edit-description">
+                                Описание
+                            </Label>
                             <Textarea
                                 id="lesson-edit-description"
                                 value={description}
@@ -119,52 +119,59 @@ function LessonEditPanel({
                         </div>
                     </div>
 
-                    <div className="px-4">
-                        <Button
-                            type="button"
-                            className="w-full"
-                            onClick={() =>
-                                navigate(`/author/courses/${courseId}/lessons/${lesson.id}/edit`)
-                            }
-                        >
-                            Редактировать содержимое урока
-                        </Button>
-                    </div>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-fit"
+                        onClick={() =>
+                            navigate(`/author/courses/${courseId}/lessons/${lesson.id}/edit`)
+                        }
+                    >
+                        <FilePenLine className="mr-2 h-4 w-4" />
+                        Редактировать содержимое
+                    </Button>
 
                     {error && (
                         <p className="text-sm text-destructive">{error}</p>
                     )}
 
-                    <div className="flex justify-end gap-2 mx-2">
+                    <div className="mt-auto border-t pt-4 flex items-center justify-between gap-2">
                         <Button
                             type="button"
-                            variant="outline"
-                            onClick={() => onOpenChange(false)}
-                            disabled={isSubmitting}
-                        >
-                            Отмена
-                        </Button>
-
-                        <Button
-                            type="button"
-                            onClick={handleSave}
-                            disabled={!name.trim() || isSubmitting}
-                        >
-                            {isSubmitting ? "Сохранение..." : "Сохранить изменения"}
-                        </Button>
-                    </div>
-
-                    <div className="flex justify-start px-4">
-                        <Button
-                            type="button"
-                            variant="destructive"
+                            variant="ghost"
+                            size="sm"
+                            className="text-destructive hover:text-destructive"
                             onClick={() => setDeleteDialogOpen(true)}
                         >
-                            Удалить урок
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Удалить
                         </Button>
+
+                        <div className="flex gap-2">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => onOpenChange(false)}
+                                disabled={isSubmitting}
+                            >
+                                Отмена
+                            </Button>
+
+                            <Button
+                                type="button"
+                                size="sm"
+                                onClick={handleSave}
+                                disabled={!name.trim() || isSubmitting}
+                            >
+                                {isSubmitting ? "Сохранение..." : "Сохранить"}
+                            </Button>
+                        </div>
                     </div>
-                </SheetContent>
-            </Sheet>
+                </div>
+            )}
+
             <DeleteLessonDialog
                 open={deleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
