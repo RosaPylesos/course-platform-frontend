@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Link, NavLink, useNavigate, useLocation } from "react-router-dom"
+import { Link, NavLink, useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -23,7 +23,6 @@ import { getTopics } from "@/api/topics"
 function Header() {
     const { user, loading, logout } = useAuth()
     const navigate = useNavigate()
-    const { pathname } = useLocation()
 
     const [topics, setTopics] = useState([])
 
@@ -48,8 +47,6 @@ function Header() {
     const navLinkClass = ({ isActive }) =>
         `text-sm font-medium transition-colors hover:text-primary ${isActive ? "text-primary" : "text-muted-foreground"
         }`
-
-    if (pathname === "/login") return null
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background">
