@@ -7,229 +7,229 @@ import { getCourseFilters } from "@/api/courseFilters"
 import CourseGrid from "@/components/courses/CourseGrid"
 
 function CatalogPage() {
-  const [searchParams] = useSearchParams()
-  const [courses, setCourses] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [filters, setFilters] = useState({
-    authors: [],
-    topics: [],
-    tag_categories: [],
-    difficulties: [],
-  })
-  const [search, setSearch] = useState("")
-  const [debouncedSearch, setDebouncedSearch] = useState("")
-  const [difficulties, setDifficulties] = useState([])
-  const [debouncedDifficulties, setDebouncedDifficulties] = useState([])
-  const [selectedTopics, setSelectedTopics] = useState([])
-  const [debouncedTopics, setDebouncedTopics] = useState([])
-  const [includeDescendants, setIncludeDescendants] = useState(false)
-  const [selectedAuthors, setSelectedAuthors] = useState([])
-  const [debouncedAuthors, setDebouncedAuthors] = useState([])
-  const [selectedTags, setSelectedTags] = useState({})
-  const [debouncedTags, setDebouncedTags] = useState({})
-  const [filtersLoaded, setFiltersLoaded] = useState(false)
-  const [contextTopicId, setContextTopicId] = useState(null)
+    const [searchParams] = useSearchParams()
+    const [courses, setCourses] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+    const [filters, setFilters] = useState({
+        authors: [],
+        topics: [],
+        tag_categories: [],
+        difficulties: [],
+    })
+    const [search, setSearch] = useState("")
+    const [debouncedSearch, setDebouncedSearch] = useState("")
+    const [difficulties, setDifficulties] = useState([])
+    const [debouncedDifficulties, setDebouncedDifficulties] = useState([])
+    const [selectedTopics, setSelectedTopics] = useState([])
+    const [debouncedTopics, setDebouncedTopics] = useState([])
+    const [includeDescendants, setIncludeDescendants] = useState(false)
+    const [selectedAuthors, setSelectedAuthors] = useState([])
+    const [debouncedAuthors, setDebouncedAuthors] = useState([])
+    const [selectedTags, setSelectedTags] = useState({})
+    const [debouncedTags, setDebouncedTags] = useState({})
+    const [filtersLoaded, setFiltersLoaded] = useState(false)
+    const [contextTopicId, setContextTopicId] = useState(null)
 
-  function handleResetFilters() {
-    setSearch("")
-    setDifficulties([])
-    setSelectedTopics([])
-    setSelectedAuthors([])
-    setSelectedTags({})
-    setPage(1)
-  }
+    function handleResetFilters() {
+        setSearch("")
+        setDifficulties([])
+        setSelectedTopics([])
+        setSelectedAuthors([])
+        setSelectedTags({})
+        setPage(1)
+    }
 
-  useEffect(() => {
+    useEffect(() => {
 
-    if (!filtersLoaded) return
-    async function loadCourses() {
-      try {
-        setLoading(true)
-        setError(null)
+        if (!filtersLoaded) return
+        async function loadCourses() {
+            try {
+                setLoading(true)
+                setError(null)
 
-        const selectedTagSlugs = filters.tag_categories.flatMap(
-          (category) => {
-            const selectedIds = debouncedTags[category.id] || []
+                const selectedTagSlugs = filters.tag_categories.flatMap(
+                    (category) => {
+                        const selectedIds = debouncedTags[category.id] || []
 
-            return category.tags
-              .filter((tag) => selectedIds.includes(tag.id))
-              .map((tag) => tag.slug)
-          }
+                        return category.tags
+                            .filter((tag) => selectedIds.includes(tag.id))
+                            .map((tag) => tag.slug)
+                    }
+                )
+
+                const data = await getCourses({
+                    page,
+                    search: debouncedSearch || undefined,
+                    difficulties: debouncedDifficulties,
+                    topics: debouncedTopics,
+                    contextTopicId: contextTopicId,
+                    includeDescendants: includeDescendants,
+                    authorIds: debouncedAuthors,
+                    tags: selectedTagSlugs.length
+                        ? selectedTagSlugs.join(",")
+                        : undefined,
+                })
+                setCourses(data.items)
+                setTotalPages(data.total_pages)
+            } catch (err) {
+                setError(err.message)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        loadCourses()
+    }, [
+        page,
+        contextTopicId,
+        debouncedSearch,
+        debouncedDifficulties,
+        debouncedTopics,
+        debouncedAuthors,
+        debouncedTags,
+        includeDescendants,
+    ])
+
+    useEffect(() => {
+        async function loadFilters() {
+            try {
+                const data = await getCourseFilters({
+                    topicId: contextTopicId,
+                })
+                setFilters(data)
+                setFiltersLoaded(true)
+            } catch (err) {
+                console.error("Не удалось загрузить фильтры: ", err)
+            }
+        }
+
+        loadFilters()
+    }, [contextTopicId])
+
+    useEffect(() => {
+        if (!filtersLoaded) return
+
+        const topicId = searchParams.get("topic")
+        const topicsParam = searchParams.get("topics")
+        const shouldIncludeDescendants =
+            searchParams.get("include_descendants") === "true"
+
+        setContextTopicId(topicId)
+        setIncludeDescendants(topicId ? shouldIncludeDescendants : false)
+
+        setSelectedTopics(
+            topicsParam
+                ? topicsParam.split(",")
+                : []
         )
+    }, [filtersLoaded, searchParams])
 
-        const data = await getCourses({ 
-          page,
-          search: debouncedSearch || undefined,
-          difficulties: debouncedDifficulties,
-          topics: debouncedTopics,
-          contextTopicId: contextTopicId,
-          includeDescendants: includeDescendants,
-          authorIds: debouncedAuthors,
-          tags: selectedTagSlugs.length
-          ? selectedTagSlugs.join(",")
-          :undefined,
-        })
-        setCourses(data.items)
-        setTotalPages(data.total_pages)
-      } catch (err) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
-    }
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            setDebouncedSearch(search.trim())
+            setDebouncedDifficulties(difficulties)
+            setDebouncedTopics(selectedTopics)
+            setDebouncedAuthors(selectedAuthors)
+            setDebouncedTags(selectedTags)
+        }, 500)
 
-    loadCourses()
-  }, [
-    page,
-    contextTopicId,
-    debouncedSearch, 
-    debouncedDifficulties, 
-    debouncedTopics, 
-    debouncedAuthors,
-    debouncedTags,
-    includeDescendants,
-  ])
+        return () => clearTimeout(timeoutId)
+    }, [
+        search,
+        difficulties,
+        selectedTopics,
+        selectedAuthors,
+        selectedTags,
+    ])
 
-  useEffect(() => {
-    async function loadFilters() {
-      try {
-        const data = await getCourseFilters({
-          topicId: contextTopicId,
-        })
-        setFilters(data)
-        setFiltersLoaded(true)
-      } catch (err) {
-        console.error("Не удалось загрузить фильтры: ", err)
-      }
-    }
+    useEffect(() => {
+        setPage(1)
+    }, [
+        debouncedSearch,
+        debouncedAuthors,
+        debouncedDifficulties,
+        debouncedTags,
+        debouncedTopics,
+    ])
 
-    loadFilters()
-  }, [contextTopicId])
+    return (
+        <main className="mx-auto max-w-7xl px-6 py-10">
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold">Каталог курсов</h1>
+                <p className="mt-2 text-muted-foreground">
+                    Выберите курс и начните изучать что-то новое.
+                </p>
+            </div>
 
-useEffect(() => {
-  if (!filtersLoaded) return
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+                <aside className="lg:sticky lg:top-24 lg:self-start">
+                    <CourseFilters
+                        search={search}
+                        onSeachChange={setSearch}
+                        difficulties={difficulties}
+                        onDifficultiesChange={setDifficulties}
+                        topics={filters.topics}
+                        selectedTopics={selectedTopics}
+                        onTopicChange={setSelectedTopics}
+                        authors={filters.authors}
+                        selectedAuthors={selectedAuthors}
+                        onAuthorsChange={setSelectedAuthors}
+                        tagCategories={filters.tag_categories}
+                        selectedTags={selectedTags}
+                        onTagsChange={setSelectedTags}
+                        onResetFilters={handleResetFilters}
+                    />
+                </aside>
 
-  const topicId = searchParams.get("topic")
-  const topicsParam = searchParams.get("topics")
-  const shouldIncludeDescendants =
-    searchParams.get("include_descendants") === "true"
+                <div className="min-w-0">
+                    {loading && (
+                        <p className="py-12 text-center text-muted-foreground">
+                            Загружаем курсы...
+                        </p>
+                    )}
 
-  setContextTopicId(topicId)
-  setIncludeDescendants(topicId ? shouldIncludeDescendants : false)
+                    {!loading && error && (
+                        <p className="py-12 text-center text-destructive">
+                            Не удалось загрузить курсы: {error}
+                        </p>
+                    )}
 
-  setSelectedTopics(
-    topicsParam
-    ? topicsParam.split(",")
-    : []
-  )
-}, [filtersLoaded, searchParams])
+                    {!loading && !error && (
+                        <>
+                            <CourseGrid courses={courses} />
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setDebouncedSearch(search.trim())
-      setDebouncedDifficulties(difficulties)
-      setDebouncedTopics(selectedTopics)
-      setDebouncedAuthors(selectedAuthors)
-      setDebouncedTags(selectedTags)
-    }, 500)
+                            {totalPages > 1 && (
+                                <div className="mt-8 flex items-center justify-center gap-4">
+                                    <Button
+                                        variant="outline"
+                                        disabled={page === 1 || loading}
+                                        onClick={() => setPage((current) => current - 1)}
+                                    >
+                                        Назад
+                                    </Button>
 
-    return () => clearTimeout(timeoutId)
-  }, [
-    search,
-    difficulties, 
-    selectedTopics, 
-    selectedAuthors,
-    selectedTags,
-  ])
+                                    <span className="text-sm text-muted-foreground">
+                                        Страница {page} из {totalPages}
+                                    </span>
 
-  useEffect(() => {
-    setPage(1)
-  }, [
-    debouncedSearch, 
-    debouncedAuthors,
-    debouncedDifficulties,
-    debouncedTags,
-    debouncedTopics,
-  ])
-
-  return (
-    <main className="mx-auto max-w-7xl px-6 py-10">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Каталог курсов</h1>
-        <p className="mt-2 text-muted-foreground">
-          Выберите курс и начните изучать что-то новое.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
-        <aside className="lg:sticky lg:top-24 lg:self-start">
-          <CourseFilters
-            search={search}
-            onSeachChange={setSearch}
-            difficulties={difficulties}
-            onDifficultiesChange={setDifficulties}
-            topics={filters.topics}
-            selectedTopics={selectedTopics}
-            onTopicChange={setSelectedTopics}
-            authors={filters.authors}
-            selectedAuthors={selectedAuthors}
-            onAuthorsChange={setSelectedAuthors}
-            tagCategories={filters.tag_categories}
-            selectedTags={selectedTags}
-            onTagsChange={setSelectedTags}
-            onResetFilters={handleResetFilters}
-          />
-        </aside>
-
-        <div className="min-w-0">
-          {loading && (
-            <p className="py-12 text-center text-muted-foreground">
-              Загружаем курсы...
-            </p>
-          )}
-
-          {!loading && error && (
-            <p className="py-12 text-center text-destructive">
-              Не удалось загрузить курсы: {error}
-            </p>
-          )}
-
-          {!loading && !error && (
-            <>
-              <CourseGrid courses={courses} />
-
-              {totalPages > 1 && (
-                <div className="mt-8 flex items-center justify-center gap-4">
-                  <Button
-                    variant="outline"
-                    disabled={page === 1 || loading}
-                    onClick={() => setPage((current) => current - 1)}
-                  >
-                    Назад
-                  </Button>
-
-                  <span className="text-sm text-muted-foreground">
-                    Страница {page} из {totalPages}
-                  </span>
-
-                  <Button
-                    variant="outline"
-                    disabled={page === totalPages || loading}
-                    onClick={() => setPage((current) => current + 1)}
-                  >
-                    Вперёд
-                  </Button>
+                                    <Button
+                                        variant="outline"
+                                        disabled={page === totalPages || loading}
+                                        onClick={() => setPage((current) => current + 1)}
+                                    >
+                                        Вперёд
+                                    </Button>
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </main>
-  )
+            </div>
+        </main>
+    )
 }
 
 export default CatalogPage

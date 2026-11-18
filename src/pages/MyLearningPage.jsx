@@ -64,27 +64,27 @@ function MyLearningPage() {
     const activeGroup = enrollments?.groups?.find(
         (group) => group.status === activeTab
     )
-    
+
     const activeItems = activeGroup?.items ?? []
 
     if (authLoading || loading) {
-    return <p className="p-6">Загрузка...</p>
+        return <p className="p-6">Загрузка...</p>
     }
 
     if (!user) {
-    return (
-        <p className="p-6">
-        Войдите в аккаунт, чтобы посмотреть своё обучение.
-        </p>
-    )
+        return (
+            <p className="p-6">
+                Войдите в аккаунт, чтобы посмотреть своё обучение.
+            </p>
+        )
     }
 
     if (error) {
-    return (
-        <p className="p-6 text-destructive">
-        {error}
-        </p>
-    )
+        return (
+            <p className="p-6 text-destructive">
+                {error}
+            </p>
+        )
     }
 
     return (
@@ -108,25 +108,25 @@ function MyLearningPage() {
             </div>
 
             {activeItems.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {activeItems.map((enrollment) => (
-                <EnrollmentCard
-                    key={enrollment.id}
-                    enrollment={{
-                        ...enrollment,
-                        status: activeTab,
-                    }}
-                    onStatusChange={() => {
-                        console.log("Callback из MyLearningPage вызван") 
-                        loadEnrollments(false)
-                    }}
-                />
-                ))}
-            </div>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {activeItems.map((enrollment) => (
+                        <EnrollmentCard
+                            key={enrollment.id}
+                            enrollment={{
+                                ...enrollment,
+                                status: activeTab,
+                            }}
+                            onStatusChange={() => {
+                                console.log("Callback из MyLearningPage вызван")
+                                loadEnrollments(false)
+                            }}
+                        />
+                    ))}
+                </div>
             ) : (
-            <p className="py-8 text-center text-muted-foreground">
-                В этом разделе пока нет курсов.
-            </p>
+                <p className="py-8 text-center text-muted-foreground">
+                    В этом разделе пока нет курсов.
+                </p>
             )}
         </div>
     )

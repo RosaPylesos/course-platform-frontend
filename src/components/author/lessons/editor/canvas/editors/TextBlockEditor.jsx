@@ -14,7 +14,7 @@ function TextBlockEditor({ content, onChange }) {
     const editorRef = useRef(null)
     const selectionRef = useRef(null)
 
-    // Нормализуем marks и объединяем соседние одинаковые runs.
+    // Marks normalization between runs
     function normalizeRuns(runs) {
         const result = []
 
@@ -43,7 +43,7 @@ function TextBlockEditor({ content, onChange }) {
         return result
     }
 
-    // Преобразуем HTML-узлы в runs.
+    // HTML-nodes -> runs conversion
     function parseNodes(nodes, inheritedMarks = []) {
         const runs = []
 
@@ -82,7 +82,7 @@ function TextBlockEditor({ content, onChange }) {
         return normalizeRuns(runs)
     }
 
-    // Строим HTML только из разрешённых тегов форматирования.
+    // HTML building with approved tags only
     function renderRuns(runs) {
         const fragment = document.createDocumentFragment()
 
@@ -102,7 +102,7 @@ function TextBlockEditor({ content, onChange }) {
         editorRef.current.replaceChildren(fragment)
     }
 
-    // Переводим DOM-позицию в позицию символа.
+    // DOM-Position -> Symbol Position translation
     function getTextOffset(node, offset) {
         const editor = editorRef.current
 
@@ -139,7 +139,7 @@ function TextBlockEditor({ content, onChange }) {
         }
     }
 
-    // Находим DOM-позицию по номеру символа.
+    // Getting DOM-Position by symbol number
     function getDomPoint(targetOffset) {
         const editor = editorRef.current
         const walker = document.createTreeWalker(
@@ -203,7 +203,7 @@ function TextBlockEditor({ content, onChange }) {
         saveSelection()
     }
 
-    // Добавляем перенос строки без создания дополнительных div.
+    // Line break w/o extra <div>
     function handleKeyDown(event) {
         if (event.key !== "Enter") return
 
@@ -229,7 +229,7 @@ function TextBlockEditor({ content, onChange }) {
         handleInput()
     }
 
-    // Форматируем выбранный диапазон по позициям символов.
+    // Formatting chosen range by symbols positions
     function applyMark(mark) {
 
         restoreSelection()
@@ -256,7 +256,7 @@ function TextBlockEditor({ content, onChange }) {
 
         if (!selectedRuns.length) return
 
-        // Единое действие для всего выделения.
+        // Unified action for selection
         const shouldRemove = selectedRuns.some(
             (run) => run.marks.includes(mark)
         )
@@ -320,7 +320,7 @@ function TextBlockEditor({ content, onChange }) {
         restoreSelection()
     }
 
-    // Первоначальная загрузка и синхронизация с внешними данными.
+    // Initial loading and sync with outer data
     useEffect(() => {
         if (!editorRef.current) return
 

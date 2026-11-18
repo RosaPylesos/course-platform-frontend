@@ -5,7 +5,6 @@ import {
     useNavigate ,
 } from "react-router-dom"
 
-// REPLACE MAYBE???
 import { ArrowLeft } from "lucide-react"
 
 import { getLesson, startLesson, completeLesson } from "@/api/lessons"
