@@ -91,8 +91,6 @@ function CatalogPage() {
     debouncedAuthors,
     debouncedTags,
     includeDescendants,
-    // filters.tag_categories,
-    // filters.topics,
   ])
 
   useEffect(() => {
@@ -166,64 +164,70 @@ useEffect(() => {
         </p>
       </div>
 
-      <CourseFilters
-        search={search}
-        onSeachChange={setSearch}
-        difficulties={difficulties}
-        onDifficultiesChange={setDifficulties}
-        topics={filters.topics}
-        selectedTopics={selectedTopics}
-        onTopicChange={setSelectedTopics}
-        authors={filters.authors}
-        selectedAuthors={selectedAuthors}
-        onAuthorsChange={setSelectedAuthors}
-        tagCategories={filters.tag_categories}
-        selectedTags={selectedTags}
-        onTagsChange={setSelectedTags}
-        onResetFilters={handleResetFilters}
-      />
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+        <aside className="lg:sticky lg:top-24 lg:self-start">
+          <CourseFilters
+            search={search}
+            onSeachChange={setSearch}
+            difficulties={difficulties}
+            onDifficultiesChange={setDifficulties}
+            topics={filters.topics}
+            selectedTopics={selectedTopics}
+            onTopicChange={setSelectedTopics}
+            authors={filters.authors}
+            selectedAuthors={selectedAuthors}
+            onAuthorsChange={setSelectedAuthors}
+            tagCategories={filters.tag_categories}
+            selectedTags={selectedTags}
+            onTagsChange={setSelectedTags}
+            onResetFilters={handleResetFilters}
+          />
+        </aside>
 
-      {loading && (
-        <p className="py-12 text-center text-muted-foreground">
-          Загружаем курсы...
-        </p>
-      )}
-
-      {!loading && error && (
-        <p className="py-12 text-center text-destructive">
-          Не удалось загрузить курсы: {error}
-        </p>
-      )}
-
-      {!loading && !error && (
-        <>
-          <CourseGrid courses={courses} />
-
-          {totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-4">
-              <Button
-                variant="outline"
-                disabled={page === 1 || loading}
-                onClick={() => setPage((current) => current - 1)}
-              >
-                Назад
-              </Button>
-
-              <span className="text-sm text-muted-foreground">
-                Страница {page} из {totalPages}
-              </span>
-
-              <Button
-                variant="outline"
-                disabled={page === totalPages || loading}
-                onClick={() => setPage((current) => current + 1)}
-              >
-                Вперёд
-              </Button>
-            </div>
+        <div className="min-w-0">
+          {loading && (
+            <p className="py-12 text-center text-muted-foreground">
+              Загружаем курсы...
+            </p>
           )}
-        </>
-      )}
+
+          {!loading && error && (
+            <p className="py-12 text-center text-destructive">
+              Не удалось загрузить курсы: {error}
+            </p>
+          )}
+
+          {!loading && !error && (
+            <>
+              <CourseGrid courses={courses} />
+
+              {totalPages > 1 && (
+                <div className="mt-8 flex items-center justify-center gap-4">
+                  <Button
+                    variant="outline"
+                    disabled={page === 1 || loading}
+                    onClick={() => setPage((current) => current - 1)}
+                  >
+                    Назад
+                  </Button>
+
+                  <span className="text-sm text-muted-foreground">
+                    Страница {page} из {totalPages}
+                  </span>
+
+                  <Button
+                    variant="outline"
+                    disabled={page === totalPages || loading}
+                    onClick={() => setPage((current) => current + 1)}
+                  >
+                    Вперёд
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
     </main>
   )
 }

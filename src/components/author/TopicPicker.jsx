@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -11,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { ChevronDown, ChevronRight, Check } from "lucide-react"
 
-function TopicPicker({ topics, value, onChange }) {
+function TopicPicker({ topics, value, onChange, allowClear = false }) {
     const [open, setOpen] = useState(false)
     const [expandedTopics, setExpandedTopics] = useState([])
 
@@ -109,6 +108,19 @@ function TopicPicker({ topics, value, onChange }) {
             <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-2">
                 <ScrollArea className="h-64">
                     <div className="space-y-1">
+                        {allowClear && (
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                className="h-8 w-full justify-start text-muted-foreground"
+                                onClick={() => {
+                                    onChange(null)
+                                    setOpen(false)
+                                }}
+                            >
+                                Без родительской темы
+                            </Button>
+                        )}
                         {renderTopics(topics)}
                     </div>
                 </ScrollArea>
