@@ -1,17 +1,67 @@
-# React + Vite
-## smth
+# course-platform-frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# О проекте
 
-Currently, two official plugins are available:
+Данный репозиторий был сделан в качестве курсовой 
+работы студента по дисциплиние "Веб-программирование",
+с использованием Javascript и Frontend-фреймворка React.
+Проект запускается при помощи Node.js и Vite.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+# Требования
 
-## React Compiler
+Для корректного запуска проекта, необходимо учесть версии
+основных его зависимостей:
+- **`npm 11.11.0`** - стандартный пакетный модуль Node.js
+- **`Node.js 24.14.1`** - платформа, выполняющая в данном 
+проекте роль веб-сервера
+- **`Vite 8.3.8`** - инструмент для сборки веб-приложений.
+- **`Tailwind CSS 4.3.5`** - Фреймворк для `CSS`
+- **`React 19.3.0`** - Frontend-Фреймворк для Javascript
+- **`React Router 7.18.5`** - Навигация по React-приложениям.
+- **`Shadcn UI 4.23.0`** - Библиотека компонентов Frontend.
+- **`dnd kit (core - 6.3.1 ; sortable - 10.0.0 ; utilities - 3.2.2)`** -
+Библиотека для реализации функций Drag&Drop в пользовательском интерфейсе.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Убедительная просьба проверить актуальность версий данных 
+модулей и инструментов, чтобы они были такими же, либо выше.
 
-## Expanding the ESLint configuration
+# Запуск
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Для запуска проекта необходимо клонировать репозиторий 
+через `git -clone`, а затем прописать в терминале команду, 
+для установки всех зависимостей:
+```bash
+npm install
+```
+Спустя какое-то время, зависимости установятся и проект можно 
+будет запустить локально:
+```bash
+npm run dev
+```
+
+**ВАЖНО** - прежде чем запускать проект, убедитесь, что у 
+вас имеется подключение к API через `.env` файл. Пример 
+содержания `.env` файла содержится [здесь](.env.example)
+
+---
+# Вкратце о содержимом
+
+Frontend часть проекта из основных каталогов, 
+находящихся в папке **`src`**
+
+- **[api](./src/api/)** - API-функции для вызова внутри
+веб-страниц.
+- **[assets](./src/assets/)** - Разного рода ресурсы, 
+картинки, иконки, обычно, в формате `.svg`.
+- **[components](./src/components/)** - Компоненты, из 
+которых состоят страницы, имеют формат `.jsx` (Формат разметки в 
+React)
+- **[contexts](./src/contexts/)** - Контексты, либо же 
+передача общих данных или внедрение зависимостей без явного 
+указания пропсов.
+- **[pages](./src/pages/)** - Страницы, которые существуют в 
+проекте.
+- **[routes](./src/routes/)** - В данном случае, переадрессация 
+как мера безопасности существующих маршрутов/страниц.
+- **[utils](./src/utils/)** - Переиспользуемые в проекте функции 
+(список не полный, после рефакторинга может пополниться).
