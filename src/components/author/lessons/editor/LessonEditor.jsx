@@ -173,9 +173,67 @@ function LessonEditor() {
         )
     }
 
+    function validateBlocks() {
+        for (const [index, block] of blocks.entries()) {
+            const blockNumber = index + 1
+            const content = block.content
+
+            switch (block.type) {
+                case "heading" :
+                    if (!content.text?.trim()) {
+                        return `Блок ${blockNumber}: заполните заголовок.`
+                    }
+                    break
+                
+                case "text":
+                    if (!content.runs?.some((run) => run.content?.trim())) {
+                        return `Блок ${blockNumber}: добавьте текст.`
+                    }
+                    break
+                
+                case "image":
+                    if (!content.url?.trim()) {
+                        return `Блок ${blockNumber}: укажите URL изображения.`
+                    }
+                    if (!content.alt?.trim()) {
+                        return `Блок ${blockNumber}: добавьте описание изобраежния.`
+                    }
+                    break
+                
+                case "video":
+                    if (!content.url?.trim()) {
+                        return `Блок ${blockNumber}: укажите URL видео.`
+                    }
+                    break
+
+                case "callout":
+                    if (!content.text?.trim()) {
+                        return `Блок ${blockNumber}: заполните текст заметки.`
+                    }
+                    break
+
+                case "code":
+                    if (!content.language?.trim()) {
+                        return `Блок ${blockNumber}: укажите язык программирования.`
+                    }
+                    break
+            }
+        }
+
+        return null
+    }
+
     async function handleSave() {
         setIsSaving(true)
         setSaveError("")
+
+        const validationError = validateBlocks()
+
+        if (validationError) {
+            setSaveError(validationError)
+            setIsSaving(false)
+            return false
+        }
 
         try {
             const updatedLesson = await updateLesson(

@@ -31,15 +31,23 @@ function HomePage() {
 	}, [token, authLoading])
 
 	if (authLoading || loading) {
-		return <p>Загрузка...</p>
+        <main className="flex min-h-[60vh] items-center justify-center px-6">
+            <p className="text-muted-foreground">Загрузка...</p>
+        </main>
 	}
 
 	if (error) {
-		return <p className="text-destructive">{error}</p>
+        <main className="flex min-h-[60vh] items-center justify-center px-6">
+            <p className="text-destructive text-center">{error}</p>
+        </main>
 	}
 
 	if (sections.length === 0) {
-		return <p>Пока нет доступных курсов.</p>
+		<main className="flex min-h-[60vh] items-center justify-center px-6">
+            <p className="text-muted-foreground text-center">
+                Пока нет доступных курсов.
+            </p>
+        </main>
 	}
 
 	return (
